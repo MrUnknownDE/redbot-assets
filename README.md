@@ -11,13 +11,13 @@ Um diese Cogs auf deinem eigenen Redbot zu installieren, folge diesen einfachen 
 1. **Füge das Repository zu deinem Bot hinzu:**
    Nutze diesen Befehl im Discord-Chat deines Bots (ersetze `[p]` durch deinen Prefix, z.B. `!`):
    ```
-   [p]repo add redbot-assets https://github.com/MrUnknownDE/redbot-assets
+   [p]repo add mrunknownde-assets https://github.com/MrUnknownDE/redbot-assets
    ```
 
 2. **Installiere den gewünschten Cog:**
    Um zum Beispiel das `bierbaron`-Cog zu installieren, tippe:
    ```
-   [p]cog install redbot-assets bierbaron
+   [p]cog install mrunknownde-assets bierbaron
    ```
 
 3. **Lade das Cog:**
