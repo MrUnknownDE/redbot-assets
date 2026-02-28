@@ -14,7 +14,7 @@ class Bierbaron(commands.Cog):
     async def info(self, ctx: commands.Context):
         """Informationen über den Bierbaron."""
         embed = discord.Embed(
-            title="Der Bierbaron",
+            title="der-Bierbaron",
             description="Willkommen beim offiziellen Bierbaron Discord-System.\nHier dreht sich alles um das Trinken in VRChat.",
             color=discord.Color.gold(),
             url="https://der-bierbaron.de"
@@ -50,7 +50,7 @@ class Bierbaron(commands.Cog):
         avg_fill = aggregate.get("averageFillLevel", 0)
 
         embed = discord.Embed(
-            title="🍺 Bierbaron Live Server Status",
+            title="🍺 der-Bierbaron Live Server",
             color=discord.Color.from_rgb(255, 165, 0), # Orange/Gold für Bier
             timestamp=discord.utils.utcnow()
         )
