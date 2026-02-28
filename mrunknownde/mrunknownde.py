@@ -1,5 +1,5 @@
+from redbot.core import app_commands, commands
 import discord
-from redbot.core import commands
 
 class MrUnknownDE(commands.Cog):
     """Mein persönliches Info-Cog."""
@@ -7,8 +7,8 @@ class MrUnknownDE(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.hybrid_command()
-    async def mrunknown(self, ctx: commands.Context):
+    @app_commands.command(name="mrunknown")
+    async def mrunknown(self, interaction: discord.Interaction):
         """Zeigt Informationen über MrUnknownDE."""
         embed = discord.Embed(
             title="MrUnknownDE",
@@ -19,4 +19,4 @@ class MrUnknownDE(commands.Cog):
         embed.set_thumbnail(url="https://mrunk.de/pic/profil_pic.webp") # Optionales Thumbnail, falls vorhanden
         embed.add_field(name="🌐 Webseite", value="[https://mrunk.de](https://mrunk.de)", inline=False)
         
-        await ctx.send(embed=embed)
+        await interaction.response.send_message(embed=embed)

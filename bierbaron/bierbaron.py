@@ -1,5 +1,5 @@
 import discord
-from redbot.core import commands
+from redbot.core import app_commands, commands
 import aiohttp
 from datetime import datetime
 
@@ -10,8 +10,8 @@ class Bierbaron(commands.Cog):
         self.bot = bot
         self.api_url = "https://live.der-bierbaron.de/api/vrchat.json"
 
-    @commands.hybrid_command(name="bierbaron")
-    async def info(self, ctx: commands.Context):
+    @app_commands.command(name="bierbaron")
+    async def info(self, interaction: discord.Interaction):
         """Informationen über den Bierbaron."""
         embed = discord.Embed(
             title="der-Bierbaron",
@@ -23,21 +23,21 @@ class Bierbaron(commands.Cog):
         embed.add_field(name="📡 Live Stats", value="[live.der-bierbaron.de](https://live.der-bierbaron.de)", inline=True)
         embed.set_footer(text="Bierbaron VRChat Projekt")
         
-        await ctx.send(embed=embed)
+        await interaction.response.send_message(embed=embed)
 
-    @commands.hybrid_command(name="bierbaron-live")
-    async def live(self, ctx: commands.Context):
+    @app_commands.command(name="bierbaron-live")
+    async def live(self, interaction: discord.Interaction):
         """Live-Informationen vom Server."""
-        await ctx.typing()
+        await interaction.response.defer()
         
         try:
             async with aiohttp.ClientSession() as session:
                 async with session.get(self.api_url) as response:
                     if response.status != 200:
-                        return await ctx.send(f"Fehler! API gab Status-Code {response.status} zurück.")
+                        return await interaction.followup.send(f"Fehler! API gab Status-Code {response.status} zurück.")
                     data = await response.json()
         except Exception as e:
-            return await ctx.send(f"Fehler beim Abrufen der API: {e}")
+            return await interaction.followup.send(f"Fehler beim Abrufen der API: {e}")
 
         # Parse Data
         server_info = data.get("server", {})
@@ -80,4 +80,4 @@ class Bierbaron(commands.Cog):
             message = last_prost.get("message", "Prost!")
             embed.add_field(name="Letztes Prost 🍻", value=f"**{sender}** an **{recipient}**:\n*\"{message}\"*", inline=False)
 
-        await ctx.send(embed=embed)
+        await interaction.followup.send(embed=embed)
