@@ -1,0 +1,19 @@
+{
+    "author": [
+        "MrUnknownDE"
+    ],
+    "name": "Bierbaron",
+    "short": "Stats und Infos vom Bierbaron.",
+    "description": "Erlaubt den Zugriff auf Statistiken und Live-Daten vom VRChat Bierbaron Server per Slash-Befehlen.",
+    "tags": [
+        "bierbaron",
+        "vrchat",
+        "stats",
+        "live"
+    ],
+    "requirements": [
+        "aiohttp"
+    ],
+    "min_bot_version": "3.5.0",
+    "end_user_data_statement": "Dieses Cog speichert keine Endbenutzerdaten, greift aber auf die öffentliche Bierbaron API zu."
+}
