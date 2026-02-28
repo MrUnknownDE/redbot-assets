@@ -10,7 +10,7 @@ class Bierbaron(commands.Cog):
         self.bot = bot
         self.api_url = "https://live.der-bierbaron.de/api/vrchat.json"
 
-    @commands.hybrid_command(name="info")
+    @commands.hybrid_command(name="bierbaron")
     async def info(self, ctx: commands.Context):
         """Informationen über den Bierbaron."""
         embed = discord.Embed(
@@ -25,7 +25,7 @@ class Bierbaron(commands.Cog):
         
         await ctx.send(embed=embed)
 
-    @commands.hybrid_command(name="live")
+    @commands.hybrid_command(name="bierbaron-live")
     async def live(self, ctx: commands.Context):
         """Live-Informationen vom Server."""
         await ctx.typing()
