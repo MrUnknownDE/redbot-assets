@@ -1,0 +1,17 @@
+{
+    "author": [
+        "MrUnknownDE"
+    ],
+    "name": "UnknownAudio",
+    "short": "Sleek Audio UI Wrapper",
+    "description": "Erweitert das Red-DiscordBot Audio-System um ein wunderschönes UI, Slash-Commands (/uplay, /uview) und DJ-Buttons.",
+    "tags": [
+        "audio",
+        "music",
+        "ui",
+        "wrapper"
+    ],
+    "requirements": [],
+    "min_bot_version": "3.5.0",
+    "end_user_data_statement": "Dieses Cog speichert keine Audiodaten oder persönlichen Daten, leitet Anfragen jedoch an das Kern-Audiosystem weiter."
+}

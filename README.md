@@ -43,5 +43,16 @@ Das offizielle Cog für das VRChat-Projekt "Der Bierbaron". Verbindet sich direk
   - `[p]live` (bzw. `/live`): Holt die Live-Statistiken, Leaderboards für den Abend und das letzte "Prost!" direkt aus VRChat.
 - **Voraussetzungen:** Benötigt das Python Package `aiohttp`.
 
+### 3. `unknownaudio` (Unknown-Audio)
+Ein interaktiver Benutzeroberflächen-Wrapper für das Kern-Audiosystem (Lavalink) von Redbot.
+- **Interaktives UI:** Ersetzt das Tippen von Befehlen durch moderne, anklickbare Buttons (Play/Pause, Skip, Stop).
+- **Auto-Updating Player:** `/uview` generiert ein Interface, das sich eine Minute lang live aktualisiert.
+- **Vote-Skip System:** `/uskip` oder der DJ-Button ermöglichen demokratisches Skippen von Titeln.
+- **Befehle:**
+  - `/uplay <song>`
+  - `/uview`
+  - `/upause`
+  - `/uskip`
+
 ---
 *Erstellt & gepflegt von [MrUnknownDE](https://mrunk.de).*
