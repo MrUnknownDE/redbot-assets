@@ -1,0 +1,16 @@
+{
+    "author": [
+        "MrUnknownDE"
+    ],
+    "name": "MrUnknownDE",
+    "short": "Mein persönliches Info-Cog.",
+    "description": "Stellt Informationen über MrUnknownDE bereit, inklusive der Webseite und einer kurzen Bio.",
+    "tags": [
+        "mrunknownde",
+        "info",
+        "about"
+    ],
+    "requirements": [],
+    "min_bot_version": "3.5.0",
+    "end_user_data_statement": "Dieses Cog speichert keine Endbenutzerdaten."
+}
