@@ -16,7 +16,7 @@ class Bierbaron(commands.Cog):
         self.bot = bot
         self.config = Config.get_conf(self, identifier=9483726154, force_registration=True)
         self.config.register_guild(live_channel=None, live_message=None)
-        self._live_task: asyncio.Task | None = None
+        self._live_task = None
 
     async def cog_load(self):
         """Called by Redbot after the cog is fully loaded."""
@@ -58,25 +58,23 @@ class Bierbaron(commands.Cog):
         avg_fill = aggregate.get("averageFillLevel", 0)
 
         embed = discord.Embed(
-            title="🍺 der-Bierbaron – Live Server",
+            title="Bierbaron - Live Server",
             description=(
-                "Willkommen auf dem **Live-Server des Bierbar­ons**!\n"
-                "Hier übertragen alle aktiven Teilnehmer ihren Füllstand\n"
+                "Willkommen auf dem **Live-Server des Bierbar\u00f3ns**!\n"
+                "Alle aktiven Teilnehmer uebertragen ihren Fuellstand\n"
                 "fast in Echtzeit aus VRChat. Trinkt ihr mit?\n\n"
-                "[🌐 Webseite](https://der-bierbaron.de)  ·  "
-                "[📡 Live-Dashboard](https://live.der-bierbaron.de)"
+                "[Webseite](https://der-bierbaron.de)  |  "
+                "[Live-Dashboard](https://live.der-bierbaron.de)"
             ),
             color=discord.Color.from_rgb(255, 140, 0),
             timestamp=discord.utils.utcnow()
         )
-        embed.set_footer(text="Aktualisiert alle 15 Sek. · der-Bierbaron Live")
+        embed.set_footer(text="Aktualisiert alle 15 Sek. | der-Bierbaron Live")
 
-        # Server Stats
-        embed.add_field(name="👥 Spieler Online", value=f"**{online_players}**", inline=True)
-        embed.add_field(name="🧪 Ø Volumen", value=f"**{avg_vol:.1f} ml**", inline=True)
-        embed.add_field(name="📊 Ø Füllstand", value=f"**{avg_fill:.1f} %**", inline=True)
+        embed.add_field(name="Spieler Online", value=f"**{online_players}**", inline=True)
+        embed.add_field(name="Durchschn. Volumen", value=f"**{avg_vol:.1f} ml**", inline=True)
+        embed.add_field(name="Durchschn. Fuellstand", value=f"**{avg_fill:.1f} %**", inline=True)
 
-        # User table
         if users:
             lines = []
             for idx, u in enumerate(
@@ -87,35 +85,31 @@ class Bierbaron(commands.Cog):
                 drank = u.get("drinkedToday_ml", 0)
                 fill = u.get("fillLevel", 0)
 
-                # Simple fill bar (10 cells)
                 fill_pct = max(0, min(fill, 100))
                 filled_cells = round(fill_pct / 10)
-                bar = "🟧" * filled_cells + "⬛" * (10 - filled_cells)
+                bar = "|" * filled_cells + "." * (10 - filled_cells)
 
-                lines.append(f"**{idx + 1}. {name}** – {bev}\n{bar} `{fill:.1f}%` · {drank} ml heute")
+                lines.append(f"**{idx + 1}. {name}** - {bev}\n`{bar}` {fill:.1f}% | {drank} ml heute")
 
             embed.add_field(
-                name=f"🏆 Trinker Online ({len(users)})",
-                value="\n".join(lines) or "–",
+                name=f"Trinker Online ({len(users)})",
+                value="\n".join(lines) or "-",
                 inline=False
             )
         else:
-            embed.add_field(name="🏆 Trinker Online", value="Derzeit niemand aktiv.", inline=False)
+            embed.add_field(name="Trinker Online", value="Derzeit niemand aktiv.", inline=False)
 
-        # Last Prost
         if last_prost:
             sender = last_prost.get("sender", "?")
             recipient = last_prost.get("recipient", "?")
-            msg = last_prost.get("message", "Prost!")
+            prost_msg = last_prost.get("message", "Prost!")
             embed.add_field(
-                name="🍻 Letztes Prost",
-                value=f"**{sender}** trank auf **{recipient}**:\n*„{msg}"*",
+                name="Letztes Prost",
+                value=f"**{sender}** trank auf **{recipient}**:\n\"{prost_msg}\"",
                 inline=False
             )
 
         return embed
-
-    # ── Background task ──────────────────────────────────────────────────────
 
     async def _run_live_update(self):
         """Fetches API data and updates all registered live embeds."""
@@ -157,46 +151,43 @@ class Bierbaron(commands.Cog):
 
     @app_commands.command(name="bierbaron")
     async def info(self, interaction: discord.Interaction):
-        """Informationen über den Bierbaron."""
+        """Informationen ueber den Bierbaron."""
         embed = discord.Embed(
             title="der-Bierbaron",
             description=(
                 "Willkommen beim offiziellen **Bierbaron** Discord-System.\n"
-                "Hier dreht sich alles ums Trinken in VRChat – Gläser, Scales und Echtzeit-Stats."
+                "Hier dreht sich alles ums Trinken in VRChat - Glaeser, Scales und Echtzeit-Stats."
             ),
             color=discord.Color.gold(),
             url="https://der-bierbaron.de"
         )
-        embed.add_field(name="🌐 Webseite", value="[der-bierbaron.de](https://der-bierbaron.de)", inline=True)
-        embed.add_field(name="📡 Live Stats", value="[live.der-bierbaron.de](https://live.der-bierbaron.de)", inline=True)
+        embed.add_field(name="Webseite", value="[der-bierbaron.de](https://der-bierbaron.de)", inline=True)
+        embed.add_field(name="Live Stats", value="[live.der-bierbaron.de](https://live.der-bierbaron.de)", inline=True)
         embed.set_footer(text="Bierbaron VRChat Projekt")
         await interaction.response.send_message(embed=embed)
 
     @app_commands.command(name="bierbaron-live")
     async def live(self, interaction: discord.Interaction):
-        """Zeige einen einmaligen Live-Snapshot des Bierbaron-Servers."""
+        """Zeige einen Live-Snapshot des Bierbaron-Servers."""
         await interaction.response.defer()
         data = await self._fetch_api_data()
         if data is None:
             return await interaction.followup.send(
-                "❌ Fehler beim Abrufen der Bierbaron-API. Bitte später erneut versuchen."
+                "Fehler beim Abrufen der Bierbaron-API. Bitte spaeter erneut versuchen."
             )
         await interaction.followup.send(embed=self._build_live_embed(data))
 
-    # ── Bot-Owner-only management commands ───────────────────────────────────
-
     @app_commands.command(name="bierbaron-setlive")
-    @app_commands.describe(channel="Kanal für das automatisch aktualisierende Live-Embed.")
+    @app_commands.describe(channel="Kanal fuer das automatisch aktualisierende Live-Embed.")
     async def setlive(self, interaction: discord.Interaction, channel: discord.TextChannel):
         """[Bot-Owner] Startet das permanente Live-Embed in einem Kanal (alle 15 Sek.)."""
         if not await self.bot.is_owner(interaction.user):
             return await interaction.response.send_message(
-                "⛔ Nur der Bot-Owner kann diesen Befehl verwenden.", ephemeral=True
+                "Nur der Bot-Owner kann diesen Befehl verwenden.", ephemeral=True
             )
 
         await interaction.response.defer(ephemeral=True)
 
-        # Remove old embed if present
         old_ch_id = await self.config.guild(interaction.guild).live_channel()
         old_msg_id = await self.config.guild(interaction.guild).live_message()
         if old_ch_id and old_msg_id:
@@ -210,26 +201,26 @@ class Bierbaron(commands.Cog):
 
         data = await self._fetch_api_data()
         if data is None:
-            return await interaction.followup.send("❌ Konnte die API nicht erreichen.")
+            return await interaction.followup.send("Konnte die API nicht erreichen.")
 
         try:
             msg = await channel.send(embed=self._build_live_embed(data))
             await self.config.guild(interaction.guild).live_channel.set(channel.id)
             await self.config.guild(interaction.guild).live_message.set(msg.id)
             await interaction.followup.send(
-                f"✅ Live-Embed in {channel.mention} gestartet. Es wird alle **15 Sekunden** aktualisiert."
+                f"Live-Embed in {channel.mention} gestartet. Es wird alle **15 Sekunden** aktualisiert."
             )
         except discord.Forbidden:
-            await interaction.followup.send("❌ Ich habe keine Berechtigung, in diesem Kanal zu schreiben.")
+            await interaction.followup.send("Ich habe keine Berechtigung, in diesem Kanal zu schreiben.")
         except Exception as e:
-            await interaction.followup.send(f"❌ Fehler: {e}")
+            await interaction.followup.send(f"Fehler: {e}")
 
     @app_commands.command(name="bierbaron-stoplive")
     async def stoplive(self, interaction: discord.Interaction):
         """[Bot-Owner] Stoppt das permanente Live-Embed auf diesem Server."""
         if not await self.bot.is_owner(interaction.user):
             return await interaction.response.send_message(
-                "⛔ Nur der Bot-Owner kann diesen Befehl verwenden.", ephemeral=True
+                "Nur der Bot-Owner kann diesen Befehl verwenden.", ephemeral=True
             )
 
         await interaction.response.defer(ephemeral=True)
@@ -238,9 +229,8 @@ class Bierbaron(commands.Cog):
         message_id = await self.config.guild(interaction.guild).live_message()
 
         if not channel_id:
-            return await interaction.followup.send("ℹ️ Es läuft kein Live-Embed auf diesem Server.")
+            return await interaction.followup.send("Es laeuft kein Live-Embed auf diesem Server.")
 
-        # Try to delete the embed message
         channel = interaction.guild.get_channel(channel_id)
         if channel and message_id:
             try:
@@ -250,10 +240,10 @@ class Bierbaron(commands.Cog):
                 pass
             except discord.Forbidden:
                 await interaction.followup.send(
-                    "⚠️ Konnte die Live-Embed-Nachricht nicht löschen (fehlende Berechtigung), "
+                    "Konnte die Live-Embed-Nachricht nicht loeschen (fehlende Berechtigung), "
                     "aber das Auto-Update wurde deaktiviert."
                 )
 
         await self.config.guild(interaction.guild).live_channel.set(None)
         await self.config.guild(interaction.guild).live_message.set(None)
-        await interaction.followup.send("✅ Live-Embed wurde gestoppt und die Nachricht gelöscht.")
+        await interaction.followup.send("Live-Embed wurde gestoppt und die Nachricht geloescht.")
