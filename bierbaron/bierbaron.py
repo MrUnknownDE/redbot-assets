@@ -1,8 +1,9 @@
 import discord
 import aiohttp
+import asyncio
 import logging
-from redbot.core import app_commands, commands, Config
-from discord.ext import tasks
+from discord import app_commands
+from redbot.core import commands, Config
 
 log = logging.getLogger("red.bierbaron")
 
@@ -15,10 +16,22 @@ class Bierbaron(commands.Cog):
         self.bot = bot
         self.config = Config.get_conf(self, identifier=9483726154, force_registration=True)
         self.config.register_guild(live_channel=None, live_message=None)
-        self.live_update_task.start()
+        self._live_task: asyncio.Task | None = None
+
+    async def cog_load(self):
+        """Called by Redbot after the cog is fully loaded."""
+        self._live_task = asyncio.create_task(self._live_loop())
 
     def cog_unload(self):
-        self.live_update_task.cancel()
+        if self._live_task:
+            self._live_task.cancel()
+
+    async def _live_loop(self):
+        """Background loop that updates all live embeds every 15 seconds."""
+        await self.bot.wait_until_red_ready()
+        while True:
+            await self._run_live_update()
+            await asyncio.sleep(15)
 
     async def _fetch_api_data(self):
         """Fetches data from the Bierbaron API. Returns None on failure."""
@@ -104,9 +117,8 @@ class Bierbaron(commands.Cog):
 
     # ── Background task ──────────────────────────────────────────────────────
 
-    @tasks.loop(seconds=15)
-    async def live_update_task(self):
-        """Updates all registered live embeds every 15 seconds."""
+    async def _run_live_update(self):
+        """Fetches API data and updates all registered live embeds."""
         data = await self._fetch_api_data()
         if not data:
             return
@@ -131,18 +143,15 @@ class Bierbaron(commands.Cog):
                 message = await channel.fetch_message(message_id)
                 await message.edit(embed=embed)
             except discord.NotFound:
-                # Message deleted – clear config
                 await self.config.guild(guild).live_message.set(None)
                 await self.config.guild(guild).live_channel.set(None)
                 log.info(f"Live embed message not found in guild {guild_id}, cleared config.")
             except discord.Forbidden:
                 log.warning(f"Missing permission to edit live embed in guild {guild_id}.")
+            except asyncio.CancelledError:
+                raise
             except Exception as e:
                 log.error(f"Error updating live embed in guild {guild_id}: {e}")
-
-    @live_update_task.before_loop
-    async def before_live_update_task(self):
-        await self.bot.wait_until_red_ready()
 
     # ── Slash Commands ────────────────────────────────────────────────────────
 
